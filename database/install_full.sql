@@ -9,9 +9,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+07:00";
 
-CREATE DATABASE IF NOT EXISTS `sipakar_jurusan` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `sipakar_jurusan`;
-
 -- =====================================================================
 -- 1. TABEL ADMIN
 -- =====================================================================
@@ -416,7 +413,7 @@ INSERT INTO `pengembang` (`nama`, `jabatan`, `bio`, `keahlian`, `urutan`) VALUES
 -- Auto-generated oleh generate_seed.php
 -- =====================================================================
 
-USE `sipakar_jurusan`;
+
 
 SET FOREIGN_KEY_CHECKS = 0;
 

@@ -5,7 +5,7 @@
  */
 
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'sipakar_jurusan');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_NAME', 'u117434194_sipakar');
+define('DB_USER', 'u117434194_sipakar');
+define('DB_PASS', 'Randy2005_');
 define('DB_CHARSET', 'utf8mb4');
