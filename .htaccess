@@ -1,0 +1,28 @@
+RewriteEngine On
+
+# Jika file/folder tidak ada secara fisik, arahkan ke index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+# Cegah akses langsung ke folder sensitif
+RewriteRule ^(config|core|controllers|models|views|helpers|database)/ - [F,L]
+
+# Nonaktifkan directory listing
+Options -Indexes
+
+# Proteksi file .sql, .log, .env
+<FilesMatch "\.(sql|log|env|md)$">
+    Require all denied
+</FilesMatch>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Batasi ukuran upload
+php_value upload_max_filesize 4M
+php_value post_max_size 8M

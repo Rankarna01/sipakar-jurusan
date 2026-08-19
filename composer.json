@@ -1,0 +1,18 @@
+{
+    "name": "smamuh18sunggal/sipakar-jurusan",
+    "description": "Sistem Pakar Rekomendasi Jurusan PTN Menggunakan Metode Dempster-Shafer - SMA Muhammadiyah 18 Sunggal",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.0",
+        "dompdf/dompdf": "^2.0",
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "autoload": {
+        "classmap": [
+            "core/",
+            "models/",
+            "controllers/"
+        ]
+    }
+}
