@@ -7,7 +7,7 @@
 
 // ==== Base URL ====
 // Sesuaikan nama folder proyek jika berbeda saat instalasi di XAMPP
-define('BASE_URL', 'https://gold-deer-642207.hostingersite.com/');
+define('BASE_URL', 'http://aragisipakar.site/');
 define('APP_NAME', 'SiJurusan | Sistem Pakar Rekomendasi Jurusan PTN');
 define('APP_VERSION', '1.0.0');
 
