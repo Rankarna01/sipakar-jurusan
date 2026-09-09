@@ -25,9 +25,9 @@ class KonsultasiController extends Controller
     /** Halaman mulai konsultasi (cek pengaturan wajib login) */
     public function index()
     {
-        $wajibLogin = get_setting('wajib_login', '0') === '1';
+        $wajibLogin = true; // Dipaksa wajib login
 
-        if ($wajibLogin && !is_siswa_login()) {
+        if (!is_siswa_login()) {
             $_SESSION['redirect_after_login'] = 'konsultasi/mulai';
             $this->redirect('auth/login');
             return;
@@ -42,8 +42,8 @@ class KonsultasiController extends Controller
     /** Halaman soal pertanyaan (form panjang, dijawab bertahap dengan JS) */
     public function mulai()
     {
-        $wajibLogin = get_setting('wajib_login', '0') === '1';
-        if ($wajibLogin && !is_siswa_login()) {
+        $wajibLogin = true; // Dipaksa wajib login
+        if (!is_siswa_login()) {
             $this->redirect('auth/login');
             return;
         }

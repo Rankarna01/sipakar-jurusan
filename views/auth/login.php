@@ -17,17 +17,16 @@
                     <form action="<?= BASE_URL ?>auth/loginProses" method="POST">
                         <?= csrf_field() ?>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Email</label>
-                            <input type="email" name="email" class="form-control form-control-lg" required>
+                            <label class="form-label fw-semibold">NIS</label>
+                            <input type="text" name="nisn" class="form-control form-control-lg" required placeholder="Masukkan NIS Anda">
                         </div>
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Password</label>
-                            <input type="password" name="password" class="form-control form-control-lg" required>
+                            <input type="password" name="password" class="form-control form-control-lg" required placeholder="Masukkan Password (NPSN Sekolah)">
                         </div>
                         <button type="submit" class="btn btn-gradient btn-lg w-100 rounded-pill">Masuk</button>
                     </form>
                     <p class="text-center mt-4 mb-0 small">Belum punya akun? <a href="<?= BASE_URL ?>auth/register" class="fw-bold">Daftar sekarang</a></p>
-                    <p class="text-center mt-1 small"><a href="<?= BASE_URL ?>konsultasi" class="text-muted">Lanjut sebagai tamu &rarr;</a></p>
                 </div>
             </div>
         </div>

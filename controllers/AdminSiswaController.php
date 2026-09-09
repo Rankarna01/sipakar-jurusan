@@ -45,10 +45,10 @@ class AdminSiswaController extends Controller
 
     public function resetPassword($id)
     {
-        $newPassword = 'siswa123';
+        $newPassword = get_setting('npsn_sekolah', '10214151'); // Default NPSN SMA Muhammadiyah 18
         $this->siswaModel->update($id, ['password' => password_hash($newPassword, PASSWORD_BCRYPT)]);
-        log_activity('Master Pengguna', 'update', "Reset password siswa #$id");
-        $_SESSION['success'] = "Password berhasil direset menjadi: $newPassword";
+        log_activity('Master Pengguna', 'update', "Reset password siswa #$id ke NPSN");
+        $_SESSION['success'] = "Password berhasil direset menjadi NPSN ($newPassword)";
         $this->redirect('adminSiswa');
     }
 }

@@ -7,7 +7,7 @@
 
 // ==== Base URL ====
 // Sesuaikan nama folder proyek jika berbeda saat instalasi di XAMPP
-define('BASE_URL', 'http://aragisipakar.site/');
+define('BASE_URL', 'http://localhost/sipakar-jurusan/');
 define('APP_NAME', 'SiJurusan | Sistem Pakar Rekomendasi Jurusan PTN');
 define('APP_VERSION', '1.0.0');
 

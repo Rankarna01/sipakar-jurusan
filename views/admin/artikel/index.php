@@ -25,7 +25,7 @@
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($artikel)): ?>
-                <tr><td colspan="6" class="text-center text-muted py-4">Belum ada artikel.</td></tr>
+                <!-- DataTables will handle empty state automatically -->
             <?php endif; ?>
             </tbody>
         </table>

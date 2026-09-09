@@ -20,13 +20,13 @@
                         </a>
                     </td>
                     <td>
-                        <a href="<?= BASE_URL ?>adminSiswa/resetPassword/<?= $s['id_siswa'] ?>" onclick="return confirm('Reset password siswa ini ke default (siswa123)?')" class="btn btn-sm btn-outline-warning"><i class="bi bi-key"></i></a>
+                        <a href="<?= BASE_URL ?>adminSiswa/resetPassword/<?= $s['id_siswa'] ?>" onclick="return confirm('Reset password siswa ini ke default (NPSN Sekolah)?')" class="btn btn-sm btn-outline-warning"><i class="bi bi-key"></i></a>
                         <button onclick="confirmDelete('<?= BASE_URL ?>adminSiswa/hapus/<?= $s['id_siswa'] ?>', '<?= clean($s['nama']) ?>')" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($siswa)): ?>
-                <tr><td colspan="6" class="text-center text-muted py-4">Belum ada siswa terdaftar.</td></tr>
+                <!-- DataTables will handle empty state automatically -->
             <?php endif; ?>
             </tbody>
         </table>

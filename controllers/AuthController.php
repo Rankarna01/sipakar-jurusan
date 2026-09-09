@@ -34,14 +34,14 @@ class AuthController extends Controller
             return;
         }
 
-        $email = clean($_POST['email'] ?? '');
+        $nisn = clean($_POST['nisn'] ?? '');
         $password = $_POST['password'] ?? '';
 
-        $siswa = $this->siswaModel->findByEmail($email);
+        $siswa = $this->siswaModel->findByNisn($nisn);
 
         if (!$siswa || !password_verify($password, $siswa['password'])) {
-            log_login('siswa', $siswa['id_siswa'] ?? null, $email, 'gagal', 'Email atau password salah');
-            $_SESSION['error'] = 'Email atau password salah.';
+            log_login('siswa', $siswa['id_siswa'] ?? null, $nisn, 'gagal', 'NIS atau password salah');
+            $_SESSION['error'] = 'NIS atau password salah.';
             $this->redirect('auth/login');
             return;
         }
@@ -58,7 +58,7 @@ class AuthController extends Controller
         $_SESSION['siswa_kelas'] = $siswa['kelas'];
 
         $this->siswaModel->update($siswa['id_siswa'], ['last_login' => date('Y-m-d H:i:s')]);
-        log_login('siswa', $siswa['id_siswa'], $email, 'berhasil');
+        log_login('siswa', $siswa['id_siswa'], $nisn, 'berhasil');
 
         $redirect = $_SESSION['redirect_after_login'] ?? 'siswa/dashboard';
         unset($_SESSION['redirect_after_login']);
