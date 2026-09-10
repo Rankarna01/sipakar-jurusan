@@ -83,18 +83,20 @@ class KonsultasiController extends Controller
         // Skala Likert 5-poin -> bobot pengali terhadap nilai belief dasar aturan.
         // 1 = Sangat Tidak Setuju (tidak dianggap sebagai evidence sama sekali)
         // 5 = Sangat Setuju (bobot penuh)
-        $bobotLikert = [
-            '1' => 0.0,   // Sangat Tidak Setuju
-            '2' => 0.35,  // Kurang Setuju
-            '3' => 0.6,   // Cukup Setuju
-            '4' => 0.8,   // Setuju
-            '5' => 1.0,   // Sangat Setuju
+        $bobotYaTidak = [
+            'T' => 0.0, // TIDAK
+            'Y' => 1.0, // YA
         ];
 
-        // Hitung jumlah pertanyaan yang benar-benar terjawab (skala 1-5 apapun dipilih)
+        // Validasi input
+        if (empty($jawaban) || !is_array($jawaban)) {
+            $this->json(['success' => false, 'message' => 'Tidak ada jawaban yang dikirim.'], 400);
+            return;
+        }
+
         $jumlahTerjawab = 0;
-        foreach ($jawaban as $jwb) {
-            if (isset($bobotLikert[(string) $jwb])) $jumlahTerjawab++;
+        foreach ($jawaban as $id => $jwb) {
+            if (isset($bobotYaTidak[(string) $jwb])) $jumlahTerjawab++;
         }
 
         if ($jumlahTerjawab < self::MIN_JAWABAN) {
@@ -102,8 +104,7 @@ class KonsultasiController extends Controller
             return;
         }
 
-        // Ambil pertanyaan dengan skala >= 2 (Kurang Setuju ke atas) sebagai evidence yang mendukung,
-        // dengan bobot proporsional sesuai tingkat kesetujuan siswa
+        // Ambil pertanyaan dengan jawaban YA sebagai evidence yang mendukung
         $pertanyaanList = $this->pertanyaanModel->allForKonsultasi();
         $pertanyaanMap = [];
         foreach ($pertanyaanList as $p) {
@@ -114,9 +115,9 @@ class KonsultasiController extends Controller
         foreach ($jawaban as $idPertanyaan => $jwb) {
             $idPertanyaan = (int) $idPertanyaan;
             $jwbKey = (string) $jwb;
-            if (!isset($pertanyaanMap[$idPertanyaan]) || !isset($bobotLikert[$jwbKey])) continue;
-            $bobot = $bobotLikert[$jwbKey];
-            if ($bobot <= 0) continue; // "Sangat Tidak Setuju" tidak dianggap evidence
+            if (!isset($pertanyaanMap[$idPertanyaan]) || !isset($bobotYaTidak[$jwbKey])) continue;
+            $bobot = $bobotYaTidak[$jwbKey];
+            if ($bobot <= 0) continue; // "TIDAK" tidak dianggap evidence
             $p = $pertanyaanMap[$idPertanyaan];
             $evidenceTerpilih[] = [
                 'id_pertanyaan' => $idPertanyaan,
@@ -128,7 +129,7 @@ class KonsultasiController extends Controller
         }
 
         if (empty($evidenceTerpilih)) {
-            $this->json(['success' => false, 'message' => 'Anda harus menjawab minimal "Kurang Setuju" ke atas pada 1 pertanyaan agar sistem dapat memberi rekomendasi.'], 400);
+            $this->json(['success' => false, 'message' => 'Anda harus menjawab minimal "YA" pada 1 pertanyaan agar sistem dapat memberi rekomendasi.'], 400);
             return;
         }
 
@@ -148,9 +149,8 @@ class KonsultasiController extends Controller
             $rules = $this->aturanModel->byEvidence($idEvidence);
             if (empty($rules)) continue;
 
-            // Nilai belief dasar dari aturan DISKALAKAN dengan bobot tingkat kesetujuan siswa
-            // (Likert), sehingga jawaban "Sangat Setuju" memberi evidence penuh, sementara
-            // "Cukup Setuju" hanya memberi evidence sebagian -- lebih presisi dibanding Ya/Tidak biner.
+            // Nilai belief dasar dari aturan. 
+            // Karena sekarang biner (YA = 1.0, TIDAK = 0), belief yang didapat adalah belief maksimal.
             $ruleJurusan = array_map(fn($r) => [
                 'id_jurusan' => (int) $r['id_jurusan'],
                 'nama_jurusan' => $r['nama_jurusan'],

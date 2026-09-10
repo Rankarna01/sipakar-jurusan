@@ -19,39 +19,6 @@
                 </div>
             </div>
             <div class="col-lg-6" data-aos="fade-left">
-                <?php if (!empty($slider) && count($slider) >= 1): ?>
-                <div id="heroCarousel" class="carousel slide hero-carousel glass-card p-2" data-bs-ride="carousel" data-bs-interval="4000">
-                    <div class="carousel-indicators">
-                        <?php foreach ($slider as $i => $s): ?>
-                            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $i ?>" class="<?= $i === 0 ? 'active' : '' ?>"></button>
-                        <?php endforeach; ?>
-                    </div>
-                    <div class="carousel-inner rounded-4 overflow-hidden">
-                        <?php foreach ($slider as $i => $s): ?>
-                        <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
-                            <img src="<?= UPLOAD_URL . clean($s['gambar']) ?>" class="d-block w-100 hero-slide-img" alt="<?= clean($s['judul'] ?? '') ?>">
-                            <?php if (!empty($s['judul']) || !empty($s['subjudul'])): ?>
-                            <div class="carousel-caption d-none d-md-block">
-                                <?php if (!empty($s['judul'])): ?><h5><?= clean($s['judul']) ?></h5><?php endif; ?>
-                                <?php if (!empty($s['subjudul'])): ?><p class="small"><?= clean($s['subjudul']) ?></p><?php endif; ?>
-                                <?php if (!empty($s['link_tombol'])): ?>
-                                    <a href="<?= clean($s['link_tombol']) ?>" class="btn btn-sm btn-gradient rounded-pill"><?= clean($s['teks_tombol'] ?: 'Selengkapnya') ?></a>
-                                <?php endif; ?>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php if (count($slider) > 1): ?>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon"></span>
-                    </button>
-                    <?php endif; ?>
-                </div>
-                <?php else: ?>
                 <div id="heroIconCarousel" class="carousel slide glass-card p-4 hero-illustration" data-bs-ride="carousel" data-bs-interval="3500">
                     <div class="carousel-indicators">
                         <button type="button" data-bs-target="#heroIconCarousel" data-bs-slide-to="0" class="active"></button>
@@ -84,7 +51,6 @@
                     <span class="float-emoji fe5">🧠</span>
                 </div>
                 <style>.icon-slide { font-size: 180px; opacity: 0.9; }</style>
-                <?php endif; ?>
             </div>
         </div>
     </div>

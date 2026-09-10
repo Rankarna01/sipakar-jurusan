@@ -21,6 +21,58 @@
 <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/style.css">
 </head>
 <body>
+<?php
+// Fetch sliders for background
+$bg_sliders = Database::getInstance()->query("SELECT * FROM slider WHERE status='aktif' ORDER BY urutan ASC")->fetchAll();
+if (!empty($bg_sliders)):
+?>
+<div class="website-bg-slideshow">
+    <?php foreach ($bg_sliders as $i => $s): ?>
+    <div class="bg-slide <?= $i === 0 ? 'active' : '' ?>" style="background-image: url('<?= UPLOAD_URL . clean($s['gambar']) ?>'); animation-delay: <?= $i * 6 ?>s;"></div>
+    <?php endforeach; ?>
+    <div class="bg-overlay"></div>
+</div>
+<style>
+.website-bg-slideshow {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -999;
+    overflow: hidden;
+    background-color: #f8f9fa;
+}
+.bg-slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    <?php if (count($bg_sliders) > 1): ?>
+    animation: fadeSlide <?= count($bg_sliders) * 6 ?>s infinite;
+    <?php else: ?>
+    opacity: 1;
+    <?php endif; ?>
+}
+.bg-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.88); /* Overlay transparansi tinggi agar teks mudah dibaca */
+    z-index: 1;
+}
+[data-bs-theme="dark"] .bg-overlay {
+    background: rgba(15, 23, 42, 0.92); /* Overlay gelap untuk mode malam */
+}
+@keyframes fadeSlide {
+    0% { opacity: 0; transform: scale(1.0); }
+    5% { opacity: 1; }
+    <?= (100 / count($bg_sliders)) - 5 ?>% { opacity: 1; }
+    <?= (100 / count($bg_sliders)) ?>% { opacity: 0; transform: scale(1.05); }
+    100% { opacity: 0; }
+}
+</style>
+<?php endif; ?>
 
 <!-- Loading Screen -->
 <div id="loading-screen">

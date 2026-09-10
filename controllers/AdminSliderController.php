@@ -46,6 +46,11 @@ class AdminSliderController extends Controller
             return;
         }
         $gambar = upload_image($_FILES['gambar'], 'slider');
+        if (!$gambar) {
+            $_SESSION['error'] = 'Gagal mengupload gambar. Periksa permission folder uploads/slider.';
+            $this->redirect('adminSlider/tambah');
+            return;
+        }
 
         $stmt = $this->db->prepare(
             "INSERT INTO slider (judul, subjudul, gambar, link_tombol, teks_tombol, urutan) VALUES (:j,:s,:g,:l,:t,:u)"

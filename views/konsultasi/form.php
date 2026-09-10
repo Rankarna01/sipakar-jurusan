@@ -29,14 +29,8 @@ $MIN_JAWAB = 10;
                     <div class="progress progress-modern mb-2">
                         <div id="progressBar" class="progress-bar" style="width:0%"></div>
                     </div>
-                    <div class="text-center pt-1 border-top mt-2">
-                        <small class="likert-legend text-muted">
-                            <span class="badge rounded-pill" style="background:#ef4444;">1</span> Sangat Tidak Setuju &nbsp;
-                            <span class="badge rounded-pill" style="background:#fb923c;">2</span> Kurang Setuju &nbsp;
-                            <span class="badge rounded-pill" style="background:#eab308;">3</span> Cukup Setuju &nbsp;
-                            <span class="badge rounded-pill" style="background:#84cc16;">4</span> Setuju &nbsp;
-                            <span class="badge rounded-pill" style="background:var(--green);">5</span> Sangat Setuju
-                        </small>
+                    <div class="text-center pt-2 border-top mt-2">
+                        <small class="text-muted"><i class="bi bi-info-circle me-1"></i> Jawab <strong>YA</strong> atau <strong>TIDAK</strong> dengan jujur sesuai dengan diri Anda.</small>
                     </div>
                 </div>
 
@@ -78,12 +72,9 @@ $MIN_JAWAB = 10;
                                         </span>
                                         <p class="fw-semibold mb-0 small-q"><?= clean($p['pertanyaan']) ?></p>
                                     </div>
-                                    <div class="d-flex gap-1 flex-shrink-0 likert-group">
-                                        <button type="button" class="likert-btn likert-1" data-id="<?= $p['id_pertanyaan'] ?>" data-value="1" title="Sangat Tidak Setuju">1</button>
-                                        <button type="button" class="likert-btn likert-2" data-id="<?= $p['id_pertanyaan'] ?>" data-value="2" title="Kurang Setuju">2</button>
-                                        <button type="button" class="likert-btn likert-3" data-id="<?= $p['id_pertanyaan'] ?>" data-value="3" title="Cukup Setuju">3</button>
-                                        <button type="button" class="likert-btn likert-4" data-id="<?= $p['id_pertanyaan'] ?>" data-value="4" title="Setuju">4</button>
-                                        <button type="button" class="likert-btn likert-5" data-id="<?= $p['id_pertanyaan'] ?>" data-value="5" title="Sangat Setuju">5</button>
+                                    <div class="d-flex gap-2 flex-shrink-0 align-items-center">
+                                        <button type="button" class="btn btn-outline-danger btn-sm px-3 fw-bold likert-btn btn-tidak" data-id="<?= $p['id_pertanyaan'] ?>" data-value="T" title="TIDAK">TIDAK</button>
+                                        <button type="button" class="btn btn-outline-success btn-sm px-3 fw-bold likert-btn btn-ya" data-id="<?= $p['id_pertanyaan'] ?>" data-value="Y" title="YA">YA</button>
                                     </div>
                                 </div>
                                 <div class="likert-label-hint text-muted" style="font-size:0.65rem; margin-left:34px;"></div>
@@ -125,22 +116,10 @@ $MIN_JAWAB = 10;
 .answer-btn-mini.btn-ya.active, .answer-btn-mini.btn-ya:hover { background: var(--green); border-color: var(--green); color: white; }
 .answer-btn-mini.btn-tidak.active, .answer-btn-mini.btn-tidak:hover { background: #ef4444; border-color: #ef4444; color: white; }
 
-/* ===== Skala Likert 5-poin ===== */
-.likert-group { gap: 3px !important; }
-.likert-btn {
-    width: 26px; height: 26px; border-radius: 7px; border: 2px solid #e2e8f0; background: transparent;
-    display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;
-    color: #94a3b8; transition: all 0.2s ease; padding: 0;
-}
-.likert-1:hover, .likert-1.active { background: #ef4444; border-color: #ef4444; color: white; }
-.likert-2:hover, .likert-2.active { background: #fb923c; border-color: #fb923c; color: white; }
-.likert-3:hover, .likert-3.active { background: #eab308; border-color: #eab308; color: white; }
-.likert-4:hover, .likert-4.active { background: #84cc16; border-color: #84cc16; color: white; }
-.likert-5:hover, .likert-5.active { background: var(--green); border-color: var(--green); color: white; }
-.likert-legend { font-size: 0.72rem; }
+.btn-ya.active { background: var(--green) !important; border-color: var(--green) !important; color: white !important; }
+.btn-tidak.active { background: #ef4444 !important; border-color: #ef4444 !important; color: white !important; }
 @media (max-width: 576px) {
-    .likert-btn { width: 24px; height: 24px; font-size: 0.65rem; }
-    .likert-legend { display: block; line-height: 1.6; }
+    .likert-btn { padding-left: 10px !important; padding-right: 10px !important; font-size: 0.75rem; }
 }
 </style>
 

@@ -42,10 +42,11 @@ $activeMenu = $activeMenu ?? '';
             $menuGroups = [
                 'master' => [
                     'label' => 'Master Data', 'icon' => 'bi-database-fill-gear',
-                    'keys' => ['fakultas', 'jurusan', 'pertanyaan', 'evidence', 'universitas'],
+                    'keys' => ['fakultas', 'jurusan', 'pekerjaan', 'pertanyaan', 'evidence', 'universitas'],
                     'items' => [
                         ['adminFakultas', 'fakultas', 'bi-bank', 'Master Fakultas'],
                         ['adminJurusan', 'jurusan', 'bi-book', 'Master Jurusan'],
+                        ['adminPekerjaan', 'pekerjaan', 'bi-briefcase', 'Master Pekerjaan'],
                         ['adminPertanyaan', 'pertanyaan', 'bi-diagram-3', 'Pertanyaan & Basis Pengetahuan'],
                         ['adminEvidence', 'evidence', 'bi-clipboard-data', 'Master Evidence'],
                         ['adminUniversitas', 'universitas', 'bi-building', 'Master Universitas'],

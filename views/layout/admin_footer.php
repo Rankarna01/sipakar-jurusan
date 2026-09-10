@@ -11,7 +11,15 @@
 <script>
     $(document).ready(function () {
         $('.datatable').DataTable({
-            language: { url: 'https://cdn.datatables.net/plug-ins/1.13.11/i18n/id.json' }
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+                infoFiltered: "(disaring dari _MAX_ total data)",
+                zeroRecords: "Tidak ditemukan data yang sesuai",
+                paginate: { first: "Awal", last: "Akhir", next: "Selanjutnya", previous: "Sebelumnya" }
+            }
         });
     });
 
