@@ -65,4 +65,12 @@
     </div>
 </div>
 
+<?php if (isset($_GET['import'])): ?>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    new bootstrap.Modal(document.getElementById('importExcelModal')).show();
+});
+</script>
+<?php endif; ?>
+
 <?php require VIEW_PATH . 'layout/admin_footer.php'; ?>

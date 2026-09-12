@@ -4,7 +4,7 @@
 $emojiKategori = [
     'minat' => '💡', 'bakat' => '🎯', 'kemampuan' => '🧠', 'kepribadian' => '😊', 'tujuan_karier' => '🚀',
 ];
-$MIN_JAWAB = 10;
+$MIN_JAWAB = count($pertanyaan);
 ?>
 
 <section class="section-padding">
@@ -17,11 +17,11 @@ $MIN_JAWAB = 10;
                     <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
                         <div>
                             <span class="fw-bold">📋 Progress Konsultasi</span>
-                            <div class="text-muted small">Jawab minimal <strong><?= $MIN_JAWAB ?> pertanyaan</strong>, lalu klik Selesaikan kapan saja.</div>
+                            <div class="text-muted small">Jawab <strong>semua pertanyaan</strong>, lalu klik Selesaikan.</div>
                         </div>
                         <div class="d-flex align-items-center gap-3">
                             <span id="progressText" class="fw-bold text-primary fs-5">0 / <?= count($pertanyaan) ?></span>
-                            <button type="button" id="btnSubmit" class="btn btn-gradient rounded-pill px-4" disabled>
+                            <button type="button" id="btnSubmit" class="btn btn-gradient rounded-pill px-4">
                                 <i class="bi bi-check2-circle me-1"></i> Selesaikan
                             </button>
                         </div>
@@ -85,10 +85,10 @@ $MIN_JAWAB = 10;
                     </div>
 
                     <div class="text-center mt-4 mb-5">
-                        <button type="submit" id="btnSubmitBottom" class="btn btn-gradient btn-lg rounded-pill px-5" disabled>
+                        <button type="submit" id="btnSubmitBottom" class="btn btn-gradient btn-lg rounded-pill px-5">
                             <i class="bi bi-cpu-fill me-2"></i>Proses dengan Dempster-Shafer 🎓
                         </button>
-                        <p class="text-muted small mt-2" id="hintText">Jawab minimal <?= $MIN_JAWAB ?> pertanyaan untuk mengaktifkan tombol ini</p>
+                        <p class="text-muted small mt-2 fw-bold" id="hintText"><span class="text-danger">⚠ Masih ada <?= count($pertanyaan) ?> pertanyaan yang belum dijawab.</span></p>
                     </div>
                 </form>
 
@@ -138,6 +138,8 @@ document.querySelectorAll('.likert-btn').forEach(btn => {
         card.querySelectorAll('.likert-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         card.classList.add('answered');
+        card.style.border = '2px solid transparent';
+        card.style.borderColor = '#38bdf8';
 
         document.getElementById('input_' + id).value = value;
 
@@ -149,7 +151,37 @@ document.querySelectorAll('.likert-btn').forEach(btn => {
             answeredMap[id] = true;
         }
 
+        // Simpan ke localStorage
+        let savedAnswers = JSON.parse(localStorage.getItem('jawabanKonsultasi')) || {};
+        savedAnswers[id] = value;
+        localStorage.setItem('jawabanKonsultasi', JSON.stringify(savedAnswers));
+
         updateProgress();
+    });
+});
+
+// Load data dari localStorage saat halaman dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    let savedAnswers = JSON.parse(localStorage.getItem('jawabanKonsultasi'));
+    if (savedAnswers) {
+        for (const [id, value] of Object.entries(savedAnswers)) {
+            const btn = document.querySelector(`.likert-btn[data-id="${id}"][data-value="${value}"]`);
+            if (btn) {
+                // Trigger click manual untuk memicu class update dan progress
+                btn.click();
+            }
+        }
+    }
+
+    ['namaTamu', 'kelasTamu', 'genderTamu', 'emailTamu'].forEach(elId => {
+        const el = document.getElementById(elId);
+        if (el) {
+            const savedVal = localStorage.getItem(elId);
+            if (savedVal) el.value = savedVal;
+            el.addEventListener('input', () => {
+                localStorage.setItem(elId, el.value);
+            });
+        }
     });
 });
 
@@ -158,19 +190,37 @@ function updateProgress() {
     document.getElementById('progressBar').style.width = percent + '%';
     document.getElementById('progressText').innerText = terjawab + ' / ' + totalPertanyaan;
 
-    const bisaSelesai = terjawab >= minJawab;
-    document.getElementById('btnSubmit').disabled = !bisaSelesai;
-    document.getElementById('btnSubmitBottom').disabled = !bisaSelesai;
+    const bisaSelesai = terjawab >= totalPertanyaan;
 
     const hint = document.getElementById('hintText');
     if (bisaSelesai) {
-        hint.innerHTML = '✅ Kamu sudah bisa menyelesaikan konsultasi, atau lanjut jawab lebih banyak untuk hasil lebih akurat.';
+        hint.innerHTML = '<span class="text-success">✅ Semua pertanyaan telah dijawab. Anda bisa menyelesaikan konsultasi.</span>';
     } else {
-        hint.innerHTML = `Jawab ${minJawab - terjawab} pertanyaan lagi untuk bisa menyelesaikan konsultasi.`;
+        const sisa = totalPertanyaan - terjawab;
+        hint.innerHTML = `<span class="text-danger">⚠ Masih ada ${sisa} pertanyaan yang belum dijawab. Silakan lengkapi terlebih dahulu.</span>`;
     }
 }
 
 function submitKonsultasi() {
+    if (terjawab < totalPertanyaan) {
+        const sisa = totalPertanyaan - terjawab;
+        Swal.fire('Belum Lengkap', `Masih ada ${sisa} pertanyaan yang belum dijawab. Silakan lengkapi terlebih dahulu.`, 'warning');
+        
+        // Highlight unanswered
+        document.querySelectorAll('.question-card-mini').forEach(card => {
+            if (!card.classList.contains('answered')) {
+                card.style.border = '2px solid #ef4444';
+            }
+        });
+        
+        // Scroll to the first unanswered question
+        const firstUnanswered = document.querySelector('.question-card-mini:not(.answered)');
+        if (firstUnanswered) {
+            firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        return;
+    }
     const form = document.getElementById('formKonsultasi');
     const formData = new FormData(form);
     const namaTamu = document.getElementById('namaTamu');
@@ -191,6 +241,10 @@ function submitKonsultasi() {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
+            // Hapus session/localStorage jika sukses
+            localStorage.removeItem('jawabanKonsultasi');
+            ['namaTamu', 'kelasTamu', 'genderTamu', 'emailTamu'].forEach(elId => localStorage.removeItem(elId));
+            
             window.location.href = data.redirect;
         } else {
             Swal.fire('Gagal', data.message, 'error');

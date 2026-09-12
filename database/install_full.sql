@@ -138,6 +138,29 @@ CREATE TABLE `evidence` (
 ) ENGINE=InnoDB;
 
 -- =====================================================================
+-- 6.5. TABEL PEKERJAAN (DATA KARIER & PROSPEK)
+-- =====================================================================
+CREATE TABLE `pekerjaan` (
+  `id_pekerjaan` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `nama_pekerjaan` VARCHAR(150) NOT NULL,
+  `deskripsi` TEXT,
+  `tugas_utama` TEXT,
+  `skill_dibutuhkan` TEXT,
+  `bidang_industri` VARCHAR(100),
+  `contoh_instansi` TEXT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE `pekerjaan_jurusan` (
+  `id_pekerjaan` INT UNSIGNED NOT NULL,
+  `id_jurusan` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id_pekerjaan`, `id_jurusan`),
+  FOREIGN KEY (`id_pekerjaan`) REFERENCES `pekerjaan`(`id_pekerjaan`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_jurusan`) REFERENCES `jurusan`(`id_jurusan`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- =====================================================================
 -- 7. TABEL PERTANYAAN (setiap pertanyaan terhubung ke 1 evidence)
 -- =====================================================================
 CREATE TABLE `pertanyaan` (

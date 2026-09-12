@@ -82,8 +82,24 @@ class HasilController extends Controller
             }
         }
 
+        $siswa = [];
+        if (!empty($hasil['id_siswa'])) {
+            $siswaModel = $this->model('Siswa');
+            $siswa = $siswaModel->find($hasil['id_siswa']);
+        }
+
+        $db = Database::getInstance();
+        foreach ($detailRanking as $key => $rank) {
+            if ($key < 3) {
+                $stmt = $db->prepare("SELECT p.nama_pekerjaan FROM pekerjaan p JOIN pekerjaan_jurusan pj ON p.id_pekerjaan = pj.id_pekerjaan WHERE pj.id_jurusan = ?");
+                $stmt->execute([$rank['id_jurusan']]);
+                $pekerjaan = $stmt->fetchAll();
+                $detailRanking[$key]['pekerjaan_list'] = array_column($pekerjaan, 'nama_pekerjaan');
+            }
+        }
+
         require_once ROOT_PATH . '/helpers/PdfExporter.php';
         $exporter = new PdfExporter();
-        $exporter->exportHasilKonsultasi($hasil, $detailRanking, $jurusanDalamFakultas, $universitas);
+        $exporter->exportHasilKonsultasi($hasil, $detailRanking, $jurusanDalamFakultas, $universitas, $siswa);
     }
 }

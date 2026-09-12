@@ -25,16 +25,19 @@ class PdfExporter
         }
     }
 
-    public function exportHasilKonsultasi(array $hasil, array $detailRanking, array $jurusanDalamFakultas, array $universitas): void
+    public function exportHasilKonsultasi(array $hasil, array $detailRanking, array $jurusanDalamFakultas, array $universitas, array $siswa = []): void
     {
-        $html = $this->buildHtml($hasil, $detailRanking, $jurusanDalamFakultas, $universitas);
+        $html = $this->buildHtml($hasil, $detailRanking, $jurusanDalamFakultas, $universitas, $siswa);
+        
+        $namaPengguna = $siswa['nama'] ?? $hasil['nama_siswa'] ?? $hasil['nama_tamu'] ?? 'Tamu';
+        $safeName = preg_replace('/[^a-zA-Z0-9_]/', '_', str_replace(' ', '_', $namaPengguna));
 
         if ($this->dompdfAvailable) {
             $dompdf = new \Dompdf\Dompdf(['isRemoteEnabled' => true]);
             $dompdf->loadHtml($html);
             $dompdf->setPaper('A4', 'portrait');
             $dompdf->render();
-            $dompdf->stream('Hasil-Konsultasi-' . $hasil['kode_konsultasi'] . '.pdf', ['Attachment' => true]);
+            $dompdf->stream('Hasil_Konsultasi_' . $safeName . '.pdf', ['Attachment' => true]);
             exit;
         }
 
@@ -44,10 +47,12 @@ class PdfExporter
         exit;
     }
 
-    private function buildHtml(array $hasil, array $detailRanking, array $jurusanDalamFakultas, array $universitas): string
+    private function buildHtml(array $hasil, array $detailRanking, array $jurusanDalamFakultas, array $universitas, array $siswa): string
     {
-        $namaPengguna = $hasil['nama_siswa'] ?? $hasil['nama_tamu'] ?? 'Tamu';
-        $kelas = $hasil['kelas_siswa'] ?? $hasil['kelas_tamu'] ?? '-';
+        $namaPengguna = $siswa['nama'] ?? $hasil['nama_siswa'] ?? $hasil['nama_tamu'] ?? 'Tamu';
+        $kelas = $siswa['kelas'] ?? $hasil['kelas_siswa'] ?? $hasil['kelas_tamu'] ?? '-';
+        $nis = $siswa['nisn'] ?? '-';
+        $npsn = function_exists('get_setting') ? get_setting('npsn_sekolah', '10214151') : '10214151';
         $top = $detailRanking[0] ?? null;
         $namaFakultas = $hasil['nama_fakultas_terbaik'] ?? ($top['nama_fakultas'] ?? '-');
         $persenFakultas = $hasil['persentase_fakultas_terbaik'] ?? ($top['persentase'] ?? 0);
@@ -84,7 +89,9 @@ class PdfExporter
             <h2>Identitas Peserta</h2>
             <table class="info-table">
                 <tr><td><strong>Nama</strong></td><td>: <?= htmlspecialchars($namaPengguna) ?></td></tr>
+                <tr><td><strong>NIS / NISN</strong></td><td>: <?= htmlspecialchars($nis) ?></td></tr>
                 <tr><td><strong>Kelas</strong></td><td>: <?= htmlspecialchars($kelas) ?></td></tr>
+                <tr><td><strong>NPSN Sekolah</strong></td><td>: <?= htmlspecialchars($npsn) ?></td></tr>
                 <tr><td><strong>Kode Konsultasi</strong></td><td>: <?= htmlspecialchars($hasil['kode_konsultasi']) ?></td></tr>
                 <tr><td><strong>Tanggal</strong></td><td>: <?= function_exists('format_tanggal') ? format_tanggal($hasil['created_at'], true) : htmlspecialchars($hasil['created_at']) ?></td></tr>
             </table>
@@ -120,23 +127,26 @@ class PdfExporter
             </table>
             <?php endif; ?>
 
-            <?php if ($top): ?>
-            <h2>Detail Program Studi Terbaik: <?= htmlspecialchars($top['nama_jurusan']) ?></h2>
-            <?php foreach (explode("\n\n", $top['deskripsi'] ?? '') as $paragraf): if (trim($paragraf) === '') continue; ?>
+            <?php foreach (array_slice($detailRanking, 0, 3) as $idx => $rank): ?>
+            <h2>Detail Rekomendasi #<?= $idx + 1 ?>: <?= htmlspecialchars($rank['nama_jurusan']) ?> (Skor: <?= number_format((float) $rank['persentase'], 2) ?>%)</h2>
+            <?php foreach (explode("\n\n", $rank['deskripsi'] ?? '') as $paragraf): if (trim($paragraf) === '') continue; ?>
                 <p class="narasi"><?= htmlspecialchars($paragraf) ?></p>
             <?php endforeach; ?>
 
             <table class="info-table">
-                <?php if (!empty($top['skill_dibutuhkan'])): ?>
-                <tr><td style="width:160px;"><strong>🛠️ Skill Dibutuhkan</strong></td><td>: <?= htmlspecialchars($top['skill_dibutuhkan']) ?></td></tr>
+                <?php if (!empty($rank['skill_dibutuhkan'])): ?>
+                <tr><td style="width:160px;"><strong>🛠️ Skill Dibutuhkan</strong></td><td>: <?= htmlspecialchars($rank['skill_dibutuhkan']) ?></td></tr>
                 <?php endif; ?>
-                <?php if (!empty($top['prospek_kerja'])): ?>
-                <tr><td><strong>💼 Prospek Kerja</strong></td><td>: <?= htmlspecialchars($top['prospek_kerja']) ?></td></tr>
+                <?php if (!empty($rank['pekerjaan_list'])): ?>
+                <tr><td><strong>💼 Prospek Kerja</strong></td><td>: <?= htmlspecialchars(implode(', ', $rank['pekerjaan_list'])) ?></td></tr>
+                <?php elseif (!empty($rank['prospek_kerja'])): ?>
+                <tr><td><strong>💼 Prospek Kerja</strong></td><td>: <?= htmlspecialchars($rank['prospek_kerja']) ?></td></tr>
                 <?php endif; ?>
-                <?php if (!empty($top['range_gaji'])): ?>
-                <tr><td><strong>💰 Estimasi Gaji</strong></td><td>: <?= htmlspecialchars($top['range_gaji']) ?></td></tr>
+                <?php if (!empty($rank['range_gaji'])): ?>
+                <tr><td><strong>💰 Estimasi Gaji</strong></td><td>: <?= htmlspecialchars($rank['range_gaji']) ?></td></tr>
                 <?php endif; ?>
             </table>
+            <?php endforeach; ?>
 
             <?php if (!empty($top['mata_kuliah_inti'])): ?>
             <h2>Mata Kuliah Inti</h2>
@@ -147,7 +157,7 @@ class PdfExporter
             </p>
             <?php endif; ?>
 
-            <?php if (!empty($universitas)): ?>
+            <?php if (!empty($universitas) && !empty($top)): ?>
             <h2>Rekomendasi Kampus Penyedia Program Studi Ini</h2>
             <table>
                 <thead><tr><th>Universitas</th><th>Kota</th><th>Akreditasi</th></tr></thead>
@@ -162,8 +172,7 @@ class PdfExporter
                 </tbody>
             </table>
             <?php endif; ?>
-            <?php endif; ?>
-
+            
             <h2>Ringkasan Ranking Program Studi</h2>
             <table>
                 <thead><tr><th>#</th><th>Program Studi</th><th>Fakultas</th><th>Persentase Kecocokan</th></tr></thead>

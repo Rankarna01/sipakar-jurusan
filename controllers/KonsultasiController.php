@@ -99,13 +99,15 @@ class KonsultasiController extends Controller
             if (isset($bobotYaTidak[(string) $jwb])) $jumlahTerjawab++;
         }
 
-        if ($jumlahTerjawab < self::MIN_JAWABAN) {
-            $this->json(['success' => false, 'message' => 'Minimal ' . self::MIN_JAWABAN . ' pertanyaan harus dijawab sebelum menyelesaikan konsultasi.'], 400);
+        // Ambil semua pertanyaan yang digunakan untuk konsultasi
+        $pertanyaanList = $this->pertanyaanModel->allForKonsultasi();
+        $totalPertanyaan = count($pertanyaanList);
+
+        if ($jumlahTerjawab < $totalPertanyaan) {
+            $this->json(['success' => false, 'message' => "Anda baru menjawab {$jumlahTerjawab} dari {$totalPertanyaan} pertanyaan. Silakan lengkapi semua pertanyaan sebelum menyelesaikan konsultasi."], 400);
             return;
         }
 
-        // Ambil pertanyaan dengan jawaban YA sebagai evidence yang mendukung
-        $pertanyaanList = $this->pertanyaanModel->allForKonsultasi();
         $pertanyaanMap = [];
         foreach ($pertanyaanList as $p) {
             $pertanyaanMap[$p['id_pertanyaan']] = $p;
