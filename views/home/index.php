@@ -19,6 +19,29 @@
                 </div>
             </div>
             <div class="col-lg-6" data-aos="fade-left">
+                <?php if (!empty($slider)): ?>
+                <div id="heroImageCarousel" class="carousel slide hero-carousel overflow-hidden shadow-lg" data-bs-ride="carousel" data-bs-interval="4000">
+                    <div class="carousel-indicators">
+                        <?php foreach ($slider as $idx => $sl): ?>
+                        <button type="button" data-bs-target="#heroImageCarousel" data-bs-slide-to="<?= $idx ?>" class="<?= $idx === 0 ? 'active' : '' ?>"></button>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="carousel-inner">
+                        <?php foreach ($slider as $idx => $sl): ?>
+                        <div class="carousel-item <?= $idx === 0 ? 'active' : '' ?>">
+                            <img src="<?= UPLOAD_URL . clean($sl['gambar']) ?>" class="d-block w-100 hero-slide-img" alt="<?= clean($sl['judul'] ?? 'Slider') ?>">
+                            <div class="carousel-caption d-none d-md-block" style="background: rgba(15, 23, 42, 0.65); border-radius: 12px; padding: 15px; backdrop-filter: blur(4px);">
+                                <?php if (!empty($sl['judul'])): ?><h5 class="fw-bold text-white mb-1"><?= clean($sl['judul']) ?></h5><?php endif; ?>
+                                <?php if (!empty($sl['subjudul'])): ?><p class="text-white-50 mb-2"><?= clean($sl['subjudul']) ?></p><?php endif; ?>
+                                <?php if (!empty($sl['link_tombol'])): ?>
+                                <a href="<?= clean($sl['link_tombol']) ?>" class="btn btn-sm btn-outline-light rounded-pill px-3 mt-1"><?= clean($sl['teks_tombol'] ?: 'Lihat Detail') ?></a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php else: ?>
                 <div id="heroIconCarousel" class="carousel slide glass-card p-4 hero-illustration" data-bs-ride="carousel" data-bs-interval="3500">
                     <div class="carousel-indicators">
                         <button type="button" data-bs-target="#heroIconCarousel" data-bs-slide-to="0" class="active"></button>
@@ -50,6 +73,7 @@
                     <span class="float-emoji fe4">🚀</span>
                     <span class="float-emoji fe5">🧠</span>
                 </div>
+                <?php endif; ?>
                 <style>.icon-slide { font-size: 180px; opacity: 0.9; }</style>
             </div>
         </div>
