@@ -5,9 +5,24 @@
  * SMA Muhammadiyah 18 Sunggal
  */
 
-// ==== Base URL ====
-// Sesuaikan nama folder proyek jika berbeda saat instalasi di XAMPP
-define('BASE_URL', 'http://localhost/sipakar-jurusan/');
+// ==== Deteksi Environment (Lokal vs Server) ====
+$is_localhost = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1', '::1']);
+$is_localhost = $is_localhost || (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost:') === 0);
+
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$domainName = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+if ($is_localhost) {
+    define('APP_ENV', 'development');
+    // Sesuaikan folder lokal
+    define('BASE_URL', $protocol . $domainName . '/sipakar-jurusan/');
+} else {
+    define('APP_ENV', 'production');
+    // Jika di production ada subfolder, tambahkan di belakangnya, misal: domain.com/sipakar/
+    // Jika di root (public_html utama), cukup: domain.com/
+    define('BASE_URL', $protocol . $domainName . '/');
+}
+
 define('APP_NAME', 'SiJurusan | Sistem Pakar Rekomendasi Jurusan PTN');
 define('APP_VERSION', '1.0.0');
 
@@ -20,9 +35,6 @@ define('HELPER_PATH', ROOT_PATH . '/helpers/');
 define('CORE_PATH', ROOT_PATH . '/core/');
 define('UPLOAD_PATH', ROOT_PATH . '/assets/uploads/');
 define('UPLOAD_URL', BASE_URL . 'assets/uploads/');
-
-// ==== Environment ====
-define('APP_ENV', 'development'); // development | production
 define('APP_DEBUG', true);
 
 // ==== Session Security ====
